@@ -1,0 +1,16 @@
+#!/bin/bash
+
+list_file="files.list"
+
+if ! ls *.md > /dev/null 2>&1; then
+  echo "There are no Markdown files in the directory. Exiting."
+  exit 1
+fi 
+
+if [[ ! -f $(pwd)/$list_file ]]; then
+  echo "Missing $list_file in $(pwd), markdown files cannot be organized. Exiting."
+  exit 1
+fi 
+
+
+make -f ~/util/build_md/Makefile -C "$(pwd)"
