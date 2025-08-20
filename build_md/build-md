@@ -2,6 +2,8 @@
 
 list_file="files.list"
 
+echo "Running Makefile for building Markdown files."
+
 if ! ls *.md > /dev/null 2>&1; then
   echo "There are no Markdown files in the directory. Exiting."
   exit 1
@@ -12,5 +14,11 @@ if [[ ! -f $(pwd)/$list_file ]]; then
   exit 1
 fi 
 
+echo ""
+echo "The $list_file contains:"
+cat $list_file
+echo ""
 
-make -f ~/util/build_md/Makefile -C "$(pwd)"
+echo "No issues found, making main.md file."
+make -f ~/util/build_md/Makefile -C "$(pwd)" --no-print-directory
+echo "Makefile completed."
