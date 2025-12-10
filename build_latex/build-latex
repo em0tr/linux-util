@@ -1,0 +1,61 @@
+#!/bin/bash
+
+compile() {
+    if ! ls *.tex > /dev/null 2>&1; then
+        echo "There are no LaTeX files in the directory. Exiting..."
+        exit 1
+    fi 
+
+    if [[ ! -f "$(pwd)/main.tex" ]]; then
+        echo "No 'main.tex' file found. Makefile requires a 'main.tex' file. Exiting..."
+        exit 1
+    fi 
+
+    make -f ~/util/build_latex/Makefile -C "$(pwd)" --no-print-directory
+    echo "Makefile completed"
+}
+
+view() {
+    if [[ ! -f "$(pwd)/main.pdf" ]]; then
+        echo "No 'main.pdf' file found. The PDF file must be named 'main.pdf'. Exiting..."
+        exit 1
+    fi 
+    evince "$(pwd)/main.pdf" 
+}
+
+help() {
+    echo "Build LaTeX files and view PDF files."
+    echo ""
+    echo "Usage:    build-latex {compile|view|clean}"
+    echo "compile - Compile LaTeX file(s) to a PDF"
+    echo "view    - View the PDF file with Evince"
+    echo "clean   - Clean the directory by removing many of the output files (main.log, main.run.xml etc)"
+    echo "none    - No operation"
+    exit 0
+}
+
+OPERATION=${1:-None} # If no argument is provided, default to None
+OPERATION=$(echo "$OPERATION" | tr '[:upper:]' '[:lower:]') # Convert input to lowercase
+
+case $OPERATION in
+    compile|build)
+        echo "Running Makefile for compiling LaTeX files"
+        compile
+    ;;
+    view)
+        echo "Viewing main.pdf file in directory"
+        view
+    ;;
+    help|h)
+        help
+    ;;
+    clean)
+        echo "Clean LaTeX build files"
+        make -f ~/util/build_latex/Makefile -C "$(pwd)" clean --no-print-directory
+    ;;
+    none | *)
+        echo "Invalid argument provided. Use the option 'h' for help"
+        echo "Exiting..."
+        exit 1
+    ;;
+esac
