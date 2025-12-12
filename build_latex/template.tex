@@ -1,0 +1,30 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[includeheadfoot,margin=0.9in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lastpage}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\graphicspath{{./figures/}}
+\usepackage{hyperref}
+\usepackage{footnote}
+\usepackage{fancyhdr}
+\fancyhf{}
+\pagestyle{fancy}
+\setlength{\parindent}{0pt} % Remove to add paragraph indenting
+
+\newcommand*\wildcard[2][5cm]{\vspace*{2cm}\parbox{#1}{\hrulefill\par#2}}
+
+\title{Enter title \\ [3ex] }
+
+\setlength{\headheight}{32.80278pt}
+\fancyhead[R]{Enter header}
+\rfoot[R]{Page \thepage~\hspace{1pt} of~\pageref{LastPage}}
+
+\begin{document}
+\maketitle
+\pagenumbering{arabic}
+
+\tableofcontents
+
+\end{document}

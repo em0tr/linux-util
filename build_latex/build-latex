@@ -23,13 +23,24 @@ view() {
     evince "$(pwd)/main.pdf" 
 }
 
+init() {
+    if [[ -f "$(pwd)/main.tex" ]]; then
+        echo "Directory has been initialized with LaTeX already"
+        exit 1
+    fi
+    cp ~/util/build_latex/template.tex $(pwd)/main.tex
+    cp ~/util/build_latex/template.bib $(pwd)/main.bib
+    mkdir -p $(pwd)/figures
+}
+
 help() {
     echo "Build LaTeX files and view PDF files."
     echo ""
-    echo "Usage:    build-latex {compile|view|clean}"
+    echo "Usage:    build-latex {compile|view|clean|init}"
     echo "compile - Compile LaTeX file(s) to a PDF"
     echo "view    - View the PDF file with Evince"
     echo "clean   - Clean the directory by removing many of the output files (main.log, main.run.xml etc)"
+    echo "init    - Initialize a new LaTeX project and create a project using a template"
     echo "none    - No operation"
     exit 0
 }
@@ -52,6 +63,10 @@ case $OPERATION in
     clean)
         echo "Clean LaTeX build files"
         make -f ~/util/build_latex/Makefile -C "$(pwd)" clean --no-print-directory
+    ;;
+    init)
+        echo "Initialize a new LaTeX project"
+        init
     ;;
     none | *)
         echo "Invalid argument provided. Use the option 'h' for help"
