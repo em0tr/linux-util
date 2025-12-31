@@ -13,6 +13,5 @@ clean:
 	rm -f *.nlo *.ist *.nls *.ilg *.fls *.fdb*
 
 disclean: clean
-	rm -f $(NAME).pdf
 	rm -rf auto/ _region_*
 
