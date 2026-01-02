@@ -7,12 +7,48 @@
 \usepackage{graphicx}
 \graphicspath{{./figures/}}
 \usepackage{hyperref}
+\hypersetup{%
+    colorlinks=true,
+    linkcolor=black,
+    urlcolor=blue,
+    citecolor=black
+}
 \usepackage{footnote}
+\usepackage{float}
 \usepackage{fancyhdr}
+\usepackage{subfiles}
+\usepackage{titlesec}
+\titleformat{\paragraph}
+  {\normalfont\normalsize\bfseries}
+  {\theparagraph}{1em}{}
+\titlespacing*{\paragraph}{0pt}{1ex}{1ex}
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}
+\usepackage{listings}
+\usepackage{xcolor}
+\lstset{%
+    language=bash,                 % Default language
+    basicstyle=\ttfamily\small,    % Font style
+    numbers=left,                  % Line numbers on the left
+    numberstyle=\tiny\color{gray}, % Line number style
+    stepnumber=1,                  % Number every line
+    frame=single,                  % Border around code
+    rulecolor=\color{black!40},    % Frame color
+    backgroundcolor=\color{gray!5},% Light background
+    keywordstyle=\color{blue},     % Keywords
+    commentstyle=\color{green!50!black},
+    stringstyle=\color{orange!60!black},
+    breaklines=true,               % Wrap long lines
+    breakatwhitespace=true,
+    tabsize=4,
+    showstringspaces=false,
+    captionpos=b                   % Captions below listings
+}
+\usepackage{booktabs}
 \fancyhf{}
 \pagestyle{fancy}
 \setlength{\parindent}{0pt} % Remove to add paragraph indenting
-
+\date{}
 \newcommand*\wildcard[2][5cm]{\vspace*{2cm}\parbox{#1}{\hrulefill\par#2}}
 
 \usepackage[%
@@ -21,14 +57,13 @@
     style=ieee,%
     url=true,%
 ]{biblatex}
-
 \addbibresource{main.bib}
 
-\title{Enter title \\ [3ex] }
+\title{Enter Title \\ [3ex] }
 
 \setlength{\headheight}{32.80278pt}
-\fancyhead[R]{Enter header}
-\rfoot[R]{Page \thepage~\hspace{1pt} of~\pageref{LastPage}}
+\fancyhead[R]{Enter Heading}
+\rfoot[R]{Page \thepage~\hspace{1pt}of~\pageref{LastPage}}
 
 \begin{document}
 \pagenumbering{arabic}
@@ -36,6 +71,7 @@
 \thispagestyle{fancy}
 
 \tableofcontents
+\newpage 
 
 
 
