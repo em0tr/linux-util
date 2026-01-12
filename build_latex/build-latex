@@ -10,8 +10,15 @@ compile() {
         echo "No 'main.tex' file found. Makefile requires a 'main.tex' file. Exiting..."
         exit 1
     fi 
+    
+    local engine_flag="${1:-}"
+    if [[ -n "$engine_flag" ]]; then
+        make -f ~/util/build_latex/Makefile -C "$(pwd)" --no-print-directory \
+            "LATEXMK_ENGINE_FLAG=${engine_flag}"
+    else
+        make -f ~/util/build_latex/Makefile -C "$(pwd)" --no-print-directory
+    fi
 
-    make -f ~/util/build_latex/Makefile -C "$(pwd)" --no-print-directory
     echo "Makefile completed"
 }
 
@@ -37,7 +44,7 @@ help() {
     echo "Build LaTeX files and view PDF files."
     echo ""
     echo "Usage:    build-latex {compile|view|clean|init}"
-    echo "compile - Compile LaTeX file(s) to a PDF"
+    echo "compile - build-latex compile [--engine=pdflatex|xelatex|lualatex]"
     echo "view    - View the PDF file with Evince"
     echo "clean   - Clean the directory by removing many of the output files (main.log, main.run.xml etc)"
     echo "init    - Initialize a new LaTeX project and create a project using a template"
@@ -48,10 +55,25 @@ help() {
 OPERATION=${1:-None} # If no argument is provided, default to None
 OPERATION=$(echo "$OPERATION" | tr '[:upper:]' '[:lower:]') # Convert input to lowercase
 
+# Parse option --engine flag
+ENGINE_FLAG=""
+if [[ "$2" =~ ^--engine=(.+)$ ]]; then
+    case "${BASH_REMATCH[1]}" in 
+        pdflatex) ENGINE_FLAG="-pdf" ;;
+        xelatex) ENGINE_FLAG="-xelatex" ;;
+        lualatex) ENGINE_FLAG="-lualatex" ;;
+        *)
+            echo "Invalid --engine value: ${BASH_REMATCH[1]}"
+            echo "Valid: pdflatex, xelatex, lualatex"
+            exit 1
+        ;;
+    esac
+fi 
+
 case $OPERATION in
     compile|build)
         echo "Running Makefile for compiling LaTeX files"
-        compile
+        compile "$ENGINE_FLAG"
     ;;
     view)
         echo "Viewing main.pdf file in directory"

@@ -1,11 +1,14 @@
-NAME=main
+NAME := main
 
-.PHONY: all
+# Default to pdflatex. Override using LATEXMK_ENGINE_FLAG=-xelatex or other compiler
+LATEXMK_ENGINE_FLAG ?= -pdf
+
+.PHONY = all clean disclean
 
 all: clean $(NAME).pdf
 
 $(NAME).pdf: $(NAME).tex $(NAME).bib
-	latexmk -pdf $(NAME)
+	latexmk $(LATEXMK_ENGINE_FLAG) $(NAME)
 
 clean:
 	latexmk -C $(NAME)
