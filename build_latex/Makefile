@@ -2,14 +2,15 @@ NAME := main
 
 # Default to pdflatex. Override using LATEXMK_ENGINE_FLAG=-xelatex or other compiler
 LATEXMK_ENGINE_FLAG ?= -pdf
-LATEXMK_FLAGS ?= -shell-escape
+LATEXMK_SHELL_ESCAPE ?= -shell-escape
+LATEXMK_SILENT ?= -silent
 
 .PHONY = all clean disclean
 
 all: clean $(NAME).pdf
 
 $(NAME).pdf: $(NAME).tex
-	latexmk $(LATEXMK_ENGINE_FLAG) $(LATEXMK_FLAGS) $(NAME)
+	latexmk $(LATEXMK_SILENT) $(LATEXMK_ENGINE_FLAG) $(LATEXMK_SHELL_ESCAPE) $(NAME)
 
 clean:
 	latexmk -c $(NAME)
