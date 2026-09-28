@@ -15,9 +15,37 @@
 }
 \usepackage{footnote}
 \usepackage{float}
-\usepackage{csquotes}
 \usepackage{fancyhdr}
+\usepackage{csquotes}
+\usepackage{parskip}
 \usepackage{subfiles}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{forest}
+\usepackage{minted}
+\usemintedstyle{friendly}
+\setminted{%
+  fontsize=\footnotesize,
+  baselinestretch=1.2,
+  linenos,
+  numbersep=6pt,
+  tabsize=2,
+  breaklines,
+  breakanywhere=true,
+  frame=none,
+  framesep=2mm,
+  autogobble,
+  obeytabs=true
+}
+\usepackage[most]{tcolorbox}
+\newtcolorbox{examplebox}[1][Example]{%
+	title=\texttt{#1},
+	colback=white,
+	breakable,
+	colframe=black,
+	fonttitle=\bfseries,
+	boxrule=0.5pt,
+}
 \usepackage{titlesec}
 \titleformat{\paragraph}
   {\normalfont\normalsize\bfseries}
@@ -25,45 +53,25 @@
 \titlespacing*{\paragraph}{0pt}{1ex}{1ex}
 \setcounter{secnumdepth}{4}
 \setcounter{tocdepth}{4}
-\usepackage{listings}
 \usepackage{xcolor}
-\lstset{%
-    language=bash,                 % Default language
-    basicstyle=\ttfamily\small,    % Font style
-    numbers=left,                  % Line numbers on the left
-    numberstyle=\tiny\color{gray}, % Line number style
-    stepnumber=1,                  % Number every line
-    frame=single,                  % Border around code
-    rulecolor=\color{black!40},    % Frame color
-    backgroundcolor=\color{gray!5},% Light background
-    keywordstyle=\color{blue},     % Keywords
-    commentstyle=\color{green!50!black},
-    stringstyle=\color{orange!60!black},
-    breaklines=true,               % Wrap long lines
-    breakatwhitespace=true,
-    tabsize=4,
-    showstringspaces=false,
-    captionpos=b                   % Captions below listings
-}
 \usepackage{booktabs}
 \fancyhf{}
 \pagestyle{fancy}
-\setlength{\parindent}{0pt} % Remove to add paragraph indenting
 \date{}
+\author{}
 \newcommand*\wildcard[2][5cm]{\vspace*{2cm}\parbox{#1}{\hrulefill\par#2}}
+\newcommand{\cGreen}[1]{{\color{green}#1}}
+\newcommand{\cRed}[1]{{\color{red}#1}}
+\newcommand{\cBlue}[1]{{\color{blue}#1}}
+\newcommand{\ct}[1]{{\texttt{#1}}}
 
-\usepackage[%
-    backend=biber,%
-    sorting=none,%
-    style=ieee,%
-    url=true,%
-]{biblatex}
-\addbibresource{main.bib}
+\newcommand{\projTitle}{Enter Project Title}
 
-\title{Enter Title \\ [3ex] }
+\title{\projTitle}
 
 \setlength{\headheight}{32.80278pt}
-\fancyhead[R]{Enter Heading}
+\fancyhead[R]{\projTitle}
+\fancyhead[L]{\rightmark}
 \rfoot[R]{Page \thepage~\hspace{1pt}of~\pageref{LastPage}}
 
 \begin{document}
