@@ -12,7 +12,7 @@ $(NAME).pdf: $(NAME).tex
 	latexmk $(LATEXMK_ENGINE_FLAG) $(LATEXMK_FLAGS) $(NAME)
 
 clean:
-	latexmk -C $(NAME)
+	latexmk -c $(NAME)
 	rm -f *.aux *.bbl *.blg *-blx.bib *.log *.out *.run.xml *.toc *.bcf *~
 	rm -f *.nlo *.ist *.nls *.ilg *.fls *.fdb* *.pyg
 	rm -rf _minted-main/
