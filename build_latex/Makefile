@@ -14,9 +14,16 @@ $(NAME).pdf: $(NAME).tex
 
 clean:
 	latexmk -c $(NAME)
-	rm -f *.aux *.bbl *.blg *-blx.bib *.log *.out *.run.xml *.toc *.bcf *~
-	rm -f *.nlo *.ist *.nls *.ilg *.fls *.fdb* *.pyg
-	rm -rf _minted-main/
+	# Clean PDF files from sections/ subdirectory
+	rm -rf sections/*.pdf
+	# Clean minted caches
+	find . -type d -name "_minted-*" -exec rm -rf {} +
+	# Clean auxiliary files
+	find . -type f \( -name "*.aux" -o -name "*.log" -o -name "*.toc" -o \
+	    -name "*.out" -o -name "*.gz" -o -name "*.bbl" -o -name "*.blg" -o -name "*.run.xml" \
+	    -o -name "*.bcf" -o -name "*.fls" -o -name "*.fdb*" -o -name "*.pyg" \
+	    -o -name "*~" \) -not -path "*/.git/*" -exec rm -f {} +
+	rm -rf _minted-main/ auto/ _region_*
 
 disclean: clean
 	rm -rf auto/ _region_*
