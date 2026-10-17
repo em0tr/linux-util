@@ -1,6 +1,6 @@
 NAME := main
 
-# Default to pdflatex. Override using LATEXMK_ENGINE_FLAG=-xelatex or other compiler
+# Default to pdflatex. Override using LATEXMK_ENGINE_FLAG=-lualatex to use LuaLatex.
 LATEXMK_ENGINE_FLAG ?= -pdf
 LATEXMK_SHELL_ESCAPE ?= -shell-escape
 LATEXMK_SILENT ?= -silent

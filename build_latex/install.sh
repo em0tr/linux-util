@@ -8,9 +8,7 @@ required_commands=(
     make 
     latexmk
     pdflatex
-    xelatex
     lualatex
-    evince
 )
 
 for cmd in "${required_commands[@]}"; do 
