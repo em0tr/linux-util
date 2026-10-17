@@ -1,32 +1,42 @@
--- Set options
-vim.opt.number = true
-vim.opt.relativenumber = false
-vim.opt.expandtab = true
-vim.opt.shiftwidth = 4
-vim.opt.tabstop = 4
-vim.opt.autoindent = true
-vim.opt.smartindent = true
-vim.opt.wrap = true
-vim.opt.hidden = true
-vim.opt.mouse = "a"
-vim.opt.termguicolors = true
-vim.opt.cursorline = true
-vim.opt.scrolloff = 8
-vim.opt.updatetime = 300
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
-vim.opt.swapfile = false
-vim.opt.clipboard = "unnamedplus"
+local opt = vim.opt
+
+opt.number = true
+opt.relativenumber = false
+opt.expandtab = true
+opt.shiftwidth = 4
+opt.tabstop = 4
+opt.autoindent = true
+opt.smartindent = true
+opt.wrap = true
+opt.linebreak = true
+opt.breakindent = true
+opt.hidden = true
+opt.mouse = "a"
+opt.cursorline = true
+opt.termguicolors = true
+opt.scrolloff = 8
+opt.updatetime = 300
+opt.ignorecase = true
+opt.smartcase = true
+opt.swapfile = false
+opt.clipboard = "unnamedplus"
+opt.colorcolumn = "120"
+opt.signcolumn = "yes:1"
+opt.showcmd = true
 
 -- Filetype-specific keymaps
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = "markdown",
+  pattern = { "markdown", "tex" },
   callback = function()
     local opts = { noremap = true, buffer = true, expr = false }
     -- Add closing $-symbol for LaTeX
     vim.keymap.set("i", "$", "$$<Left>", opts)
-    -- Add closing backtics and place the cursor after the three initial ones where the language is defined for markdown
-    vim.keymap.set("i", "```", "```<CR><CR>```<Up><Up><Right><Right><Right>", opts)
+    -- Add closing |-symbol for LaTeX
+    vim.keymap.set("i", "|", "||<Left>", opts)
+    -- Add closing backtics for markdown
+    if vim.bo.filetype == "markdown" then
+      vim.keymap.set("i", "```", "```<CR><CR>```<Up><Up><Right><Right><Right>", opts)
+    end
   end,
 })
 
@@ -41,8 +51,8 @@ vim.keymap.set("i", "<Del>", function()
       ["{"] = "}",
       ["("] = ")",
       ["["] = "]",
-      ['"'] = '"',
       ["'"] = "'",
+      ['"'] = '"',
       ["`"] = "`",
     }
     if pairs[prev_char] == next_char then
@@ -62,8 +72,8 @@ vim.keymap.set("i", "<BS>", function()
       ["{"] = "}",
       ["("] = ")",
       ["["] = "]",
-      ['"'] = '"',
       ["'"] = "'",
+      ['"'] = '"',
       ["`"] = "`",
     }
     if pairs[prev_char] == next_char then
@@ -77,115 +87,38 @@ end, { expr = true })
 vim.keymap.set("i", "{", "{}<Left>", { noremap = true })
 vim.keymap.set("i", "(", "()<Left>", { noremap = true })
 vim.keymap.set("i", "[", "[]<Left>", { noremap = true })
-vim.keymap.set("i", '"', '""<left>', { noremap = true })
 vim.keymap.set("i", "'", "''<Left>", { noremap = true })
+vim.keymap.set("i", '"', '""<Left>', { noremap = true })
 
--- Keymaps
+vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
+
 vim.keymap.set("n", "<Space>", "<Nop>", { silent = true })
-vim.g.mapleader = " " -- Set <leader> key
-
--- Basic keymaps
 vim.keymap.set("n", "<leader>w", ":w<CR>")
 vim.keymap.set("n", "<leader>q", ":q<CR>")
 vim.keymap.set("n", "<F2>", ":w<CR>")
 vim.keymap.set("i", "<F2>", "<Esc>:w<CR>i<Right>")
 
--- Plugins
-vim.opt.rtp:prepend("~/.local/share/nvim/lazy/lazy.nvim")
-require("lazy").setup({
-  { 
-    "nvim-telescope/telescope.nvim",
-    tag = "0.1.4",
-    dependencies = { "nvim-lua/plenary.nvim" } 
-  },
-  { 
-    "nvim-treesitter/nvim-treesitter",
-    build = ":TSUpdate" 
-  }, 
-  {
-    "neovim/nvim-lspconfig",
-    dependencies = {
-      "hrsh7th/nvim-cmp",
-      "hrsh7th/cmp-nvim-lsp",
-      "hrsh7th/cmp-buffer",
-      "hrsh7th/cmp-path",
-      "hrsh7th/cmp-cmdline",
-      "L3MON4D3/LuaSnip",
-      "saadparwaiz1/cmp_luasnip",
-    },
-  },
-  {
-    "iamcco/markdown-preview.nvim",
-    build = function()
-      vim.fn["mkdp#util#install"]()
-    end,
-    cmd = { "MarkdownPreviewToggle", "MarkdowPreview", "MarkdownPreviewStop" },
-    ft = { "markdown" },
-  },  
-  { 
-    "sainnhe/gruvbox-material"
-  },
-  { 
-    "nvim-lualine/lualine.nvim",
-    dependencies = { "nvim-tree/nvim-web-devicons" },
-    event = "VeryLazy", 
-    config = function()
-      require("config.lualine")
-    end,
-  },
-  {
-    "tpope/vim-surround",
-  },
-  {
-    "windwp/nvim-autopairs",
-  },
-  {
-    "lewis6991/gitsigns.nvim",
-  },
-  {
-    "nvim-tree/nvim-web-devicons",
-  },
-  {
-    "goolord/alpha-nvim",
-    -- dependencies = { 'echasnovski/mini.icons' },
-    dependencies = { 'nvim-tree/nvim-web-devicons' },
-    config = function()
-      local startify = require("alpha.themes.startify")
-      -- available: devicons, mini, default is mini
-      -- if provider not loaded and enabled is true, it will try to use another provider
-      startify.file_icons.provider = "devicons"
-      require("alpha").setup(
-        startify.config
-      )
-    end,
-  },
-  {
-    "rcarriga/nvim-notify",
-  },
-  {
-    "lewis6991/gitsigns.nvim",
-    config = function()
-      require("gitsigns").setup()
-    end,
-  },
-  {
-    'dense-analysis/ale',
-    config = function()
-        -- Configuration goes here.
-        local g = vim.g
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+if not (vim.uv or vim.loop).fs_stat(lazypath) then
+  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+  local out = vim.fn.system({
+    "git", "clone", "--filter=blob:none", "--branch=stable",
+    lazyrepo, lazypath,
+  })
+  if vim.v.shell_error ~= 0 then
+    error("Failed to clone lazy.nvim:\n" .. out)
+  end
+end
 
-        g.ale_ruby_rubocop_auto_correct_all = 1
+vim.opt.rtp:prepend(lazypath)
 
-        g.ale_linters = {
-            ruby = {'rubocop', 'ruby'},
-            lua = {'lua_language_server'}
-        }
-    end
-  },
-})
+-- Load plugins from lua/plugins/
+require("lazy").setup("plugins")
+
 -- Set theme
 vim.g.gruvbox_material_enable_italic = true
-vim.o.background = "dark" -- Default to dark theme
+vim.o.background = "dark"
 vim.keymap.set("n", "<leader>tb", function()
   if vim.o.background == "dark" then
     vim.o.background = "light"
@@ -193,13 +126,8 @@ vim.keymap.set("n", "<leader>tb", function()
     vim.o.background = "dark"
   end
 end, { desc = "Toggle background" })
-
 vim.cmd.colorscheme('gruvbox-material')
 
--- Markdown-preview settings
-require("config.markdown")
-
--- Setup nvim-cmp
 local cmp = require("cmp")
 local luasnip = require("luasnip")
 
@@ -224,47 +152,41 @@ cmp.setup({
 })
 
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
 -- C/C++ LSP with clangd
 vim.lsp.config.clangd = {
   capabilities = capabilities,
 }
 vim.lsp.enable("clangd")
 
--- Python LSP
-vim.lsp.config.pyright = {
-  capabilities = capabilities,
-}
-vim.lsp.enable("pyright")
-
--- Rust LSP with rust-analyzer
-vim.lsp.config.rust_analyzer = {
-  capabilities = capabilities,
+vim.lsp.config("pyright", {
   settings = {
-    ["rust-analyzer"] = {
-      cargo = { allFeatures = true },
-      checkOnSave = true,
-      check = { command = "clippy" },
-      inlayHints = {
-        enable = true,
-        locationLinks = false, -- don't make hints clickable
+    python = {
+      analysis = {
+        typeCheckingMode = "basic",
       },
     },
   },
-  on_attach = function(client, bufnr)
-    -- Enable inlay hints automatically when Rust LSP attaches
-    if client.server_capabilities.inlayHintProvider then
-      vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
-    end
+})
+vim.lsp.enable("pyright")
 
-    -- Optional: toggle inlay hints manually with <leader>ih
-    vim.keymap.set("n", "<leader>ih", function()
-      local enabled = vim.lsp.inlay_hint.is_enabled({ bufnr = 0 })
-      vim.lsp.inlay_hint.enable(not enabled, { bufnr = 0 })
-    end, { desc = "Toggle Inlay Hints", buffer = bufnr })
-  end,
-}
+vim.lsp.config("texlab", {
+  settings = {
+    texlab = {
+      build = { onSave = false },
+      chktex = { onEdit = true },
+    },
+  },
+})
+vim.lsp.enable("texlab")
+require("conform").setup({
+  formatters_by_ft = { tex = { "latexindent" } },
+})
 
--- Enable rust-analyzer
-vim.lsp.enable("rust_analyzer")
-
+vim.keymap.set("i", "<CR>", function()
+  local line = vim.api.nvim_get_current_line()
+  local env = line:match("^%s*\\begin{([^}]+)}%s*$")
+  if env then
+    return "<CR>\\end{" .. env .. "}<Esc>O"
+  end
+  return "<CR>"
+end, { buffer = true, expr = true })
