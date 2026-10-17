@@ -29,7 +29,7 @@ view() {
         exit 1
     fi
     if command -v evince &> /dev/null; then
-        evince "$(pwd)/$pdf"
+        evince "$pdf"
     else
         echo "No PDF viewer available. If on a VPS run this on your local machine:"
         printf 'scp %q %q\n' "user@your-vps:$pdf" "./main.pdf"
