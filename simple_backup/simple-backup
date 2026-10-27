@@ -1,0 +1,20 @@
+#!/bin/bash
+
+dir_name="$(basename "$(pwd)")"
+backup_dir="${BACKUP_DIR:-$HOME/backups}"
+stamp="$(date +%Y-%m-%d_%H%M%S)"
+
+mkdir -p "$backup_dir"
+
+tar -czf "$backup_dir/${dir_name}_${stamp}.tar.gz" \
+    --exclude='*.aux' --exclude='*.log' --exclude='*.out' \
+    --exclude='*.toc' --exclude='*.fls' --exclude='*.fdb_latexmk' \
+    --exclude='*.synctex.gz' --exclude='*.bbl' --exclude='*.blg' \
+    --exclude='_minted-*' \
+    -C "$(dirname "$(pwd)")" "$dir_name"
+
+echo "Backup saved to $backup_dir/${dir_name}_${stamp}.tar.gz"
+
+# Keep only the 10 most recent backups of a project
+ls -1t "$backup_dir/${dir_name}_"*.tar.gz 2>/dev/null | tail -n +11 | xargs -r rm --
+
