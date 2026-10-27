@@ -1,19 +1,22 @@
 NAME := main
 
-# Default to pdflatex. Override using LATEXMK_ENGINE_FLAG=-lualatex to use LuaLatex.
+# Output name (without .pdf). Defaults to the source name.
+JOBNAME ?= $(NAME)
+
+# Default to pdflatex. Override using LATEXMK_ENGINE_FLAG=-lualatex to use LuaLaTeX.
 LATEXMK_ENGINE_FLAG ?= -pdf
 LATEXMK_SHELL_ESCAPE ?= -shell-escape
 LATEXMK_SILENT ?= -silent
 
-.PHONY = all clean disclean
+.PHONY: all clean distclean
 
-all: clean $(NAME).pdf
+all: clean $(JOBNAME).pdf
 
-$(NAME).pdf: $(NAME).tex
-	latexmk $(LATEXMK_SILENT) $(LATEXMK_ENGINE_FLAG) $(LATEXMK_SHELL_ESCAPE) $(NAME)
+$(JOBNAME).pdf: $(NAME).tex
+	latexmk $(LATEXMK_SILENT) $(LATEXMK_ENGINE_FLAG) $(LATEXMK_SHELL_ESCAPE) -jobname=$(JOBNAME) $(NAME)
 
 clean:
-	latexmk -c $(NAME)
+	latexmk -c -jobname=$(JOBNAME) $(NAME)
 	# Clean PDF files from sections/ subdirectory
 	rm -rf sections/*.pdf
 	# Clean minted caches

@@ -3,43 +3,44 @@
 compile() {
     if ! ls *.tex > /dev/null 2>&1; then
         echo "There are no LaTeX files in the directory. Exiting..."
-        exit 1
-    fi 
+        return 1
+    fi
 
     if [[ ! -f "$(pwd)/main.tex" ]]; then
         echo "No 'main.tex' file found. Makefile requires a 'main.tex' file. Exiting..."
-        exit 1
-    fi 
-    
-    local engine_flag="${1:-}"
-    if [[ -n "$engine_flag" ]]; then
-        make -f ~/linux-util/build_latex/Makefile -C "$(pwd)" --no-print-directory \
-            "LATEXMK_ENGINE_FLAG=${engine_flag}"
-    else
-        make -f ~/linux-util/build_latex/Makefile -C "$(pwd)" --no-print-directory
+        return 1
     fi
+
+    local make_args=()
+    [[ -n "$ENGINE_FLAG" ]] && make_args+=("LATEXMK_ENGINE_FLAG=${ENGINE_FLAG}")
+    [[ -n "$OUTPUT_NAME" ]] && make_args+=("JOBNAME=${OUTPUT_NAME}")
+
+    make -f ~/linux-util/build_latex/Makefile -C "$(pwd)" --no-print-directory "${make_args[@]}"
 
     echo "Makefile completed"
 }
 
 view() {
-    local pdf="$(pwd)/main.pdf"
+    local name="${OUTPUT_NAME:-main}"
+    local pdf="$(pwd)/${name}.pdf"
+
     if [[ ! -f "$pdf" ]]; then
-        echo "No 'main.pdf' file found. The PDF file must be named 'main.pdf'. Exiting..."
-        exit 1
+        echo "No '${name}.pdf' file found in $(pwd). Exiting..."
+        return 1
     fi
+
     if command -v evince &> /dev/null; then
         evince "$pdf"
     else
         echo "No PDF viewer available. If on a VPS run this on your local machine:"
-        printf 'scp %q %q\n' "user@your-vps:$pdf" "./main.pdf"
+        printf 'scp %q %q\n' "user@your-vps:$pdf" "./${name}.pdf"
     fi
 }
 
 init() {
     if [[ -f "$(pwd)/main.tex" ]]; then
         echo "Directory has been initialized with LaTeX already"
-        exit 1
+        return 1
     fi
     cp ~/linux-util/build_latex/template.tex $(pwd)/main.tex
     cp ~/linux-util/build_latex/template.bib $(pwd)/main.bib
@@ -55,30 +56,47 @@ help() {
     echo "clean   - Clean the directory by removing many of the output files (main.log, main.run.xml etc)"
     echo "init    - Initialize a new LaTeX project and create a project using a template"
     echo "none    - No operation"
-    exit 0
+    return 0
 }
 
 OPERATION=${1:-None} # If no argument is provided, default to None
 OPERATION=$(echo "$OPERATION" | tr '[:upper:]' '[:lower:]') # Convert input to lowercase
 
-# Parse option --engine flag
 ENGINE_FLAG=""
-if [[ "$2" =~ ^--engine=(.+)$ ]]; then
-    case "${BASH_REMATCH[1]}" in 
-        pdflatex) ENGINE_FLAG="-pdf" ;;
-        lualatex) ENGINE_FLAG="-lualatex" ;;
+NAME=""
+
+for arg in "${@:2}"; do
+    case "$arg" in
+        --engine=*)
+            case "${arg#--engine=}" in
+                pdflatex) ENGINE_FLAG="-pdf" ;;
+                lualatex) ENGINE_FLAG="-lualatex" ;;
+                *)
+                    echo "Invalid --engine value: ${arg#--engine=}"
+                    echo "Valid: pdflatex, lualatex"
+                    return 1
+                ;;
+            esac
+        ;;
+        --name=*)
+            OUTPUT_NAME="${arg#--name=}"
+            OUTPUT_NAME="${OUTPUT_NAME%.pdf}"   # allow --name=report.pdf too
+            if [[ ! "$OUTPUT_NAME" =~ ^[A-Za-z0-9._-]+$ ]]; then
+                echo "Invalid --name value. Use only letters, digits, '.', '_' and '-'."
+                return 1
+            fi
+        ;;
         *)
-            echo "Invalid --engine value: ${BASH_REMATCH[1]}"
-            echo "Valid: pdflatex, xelatex, lualatex"
-            exit 1
+            echo "Unknown option: $arg"
+            return 1
         ;;
     esac
-fi 
+done
 
 case $OPERATION in
     compile|build)
         echo "Running Makefile for compiling LaTeX files"
-        compile "$ENGINE_FLAG"
+        compile
     ;;
     view)
         echo "Viewing main.pdf file in directory"
@@ -98,6 +116,6 @@ case $OPERATION in
     none | *)
         echo "Invalid argument provided. Use the option 'h' for help"
         echo "Exiting..."
-        exit 1
+        return 1
     ;;
 esac
